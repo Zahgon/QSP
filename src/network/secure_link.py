@@ -52,135 +52,22 @@ class SecureLink:
 
     def stop(self):
         """安全释放后台心跳线程"""
-        self.is_running = False
+        pass
 
     def _send_wrapped(self, data: bytes):
         """统一拦截发送操作，更新最后发送时间，压制冗余心跳"""
-        self.last_send_time = time.time()
-        self._send_raw_external(data, self.peer_addr)
+        pass
 
     def _heartbeat_loop(self):
         """心跳守护线程：侦测空闲状态并发送 KEEPALIVE 刷新路由器 NAT 映射"""
-        while self.is_running:
-            time.sleep(1.0) # 每秒醒来检查一次
-            if self.sec_channel.state != ChannelState.ESTABLISHED:
-                continue
-                
-            now = time.time()
-            # 如果距离上次发包已经超过设定间隔，就打一个心跳包出去
-            if now - self.last_send_time >= self.heartbeat_interval:
-                pkt = QSPProtocol.pack(
-                    PacketType.KEEPALIVE, 
-                    seq=0, 
-                    payload=b"PING", 
-                    session_id=self.session_id
-                )
-                self._send_wrapped(pkt)
+        pass
 
     def initiate_security_handshake(self):
-        print(f"[SecureLink] 发起安全握手...")
-        if self.sec_channel.role != 'client':
-            return
-        
-        init_payload = self.sec_channel.initiate_handshake()
-        pkt = QSPProtocol.pack(
-            PacketType.HANDSHAKE_INIT, 
-            seq=0, 
-            payload=init_payload, 
-            session_id=self.session_id
-        )
-        print(f"[SecureLink] 发送握手初始化包，长度: {len(pkt)} 字节")
-        self._send_wrapped(pkt)
+        pass
 
     def handle_network_packet(self, parsed_pkt: dict):
         # 只要收到来自该通道的任何包，都更新接收时间
-        self.last_recv_time = time.time()
-        
-        msg_type = parsed_pkt['type']
-        
-        # 如果是心跳包，已经更新了时间戳，直接丢弃即可，不需要交由上层处理
-        if msg_type == PacketType.KEEPALIVE:
-            return
-
-        payload = parsed_pkt['payload']
-        seq = parsed_pkt['seq']
-        ack = parsed_pkt['ack']
-
-        if msg_type == PacketType.HANDSHAKE_INIT:
-            print(f"[SecureLink] 收到握手初始化包")
-            resp_payload = self.sec_channel.handle_handshake_request(payload)
-            pkt = QSPProtocol.pack(
-                PacketType.HANDSHAKE_RESP, 
-                seq=0, 
-                payload=resp_payload, 
-                session_id=self.session_id
-            )
-            print(f"[SecureLink] 发送握手响应包，长度: {len(pkt)} 字节")
-            self._send_wrapped(pkt)
-            if self.sec_channel.state == ChannelState.ESTABLISHED:
-                print(f"[SecureLink] ✓ 服务端安全握手完成")
-                if self.on_handshake_done:
-                    self.on_handshake_done()
-
-        elif msg_type == PacketType.HANDSHAKE_RESP:
-            print(f"[SecureLink] 收到握手响应包")
-            self.sec_channel.handle_handshake_response(payload)
-            if self.sec_channel.state == ChannelState.ESTABLISHED:
-                print(f"[SecureLink] ✓ 客户端安全握手完成")
-                if self.on_handshake_done:
-                    self.on_handshake_done()
-
-        elif msg_type == PacketType.DATA:
-            if self.sec_channel.state != ChannelState.ESTABLISHED:
-                return
-
-            cleartext = self.sec_channel.decrypt_payload(payload)
-            deliverable, current_ack, sack_blocks = self.rudp.receive_data(seq, cleartext)
-            sack_payload = QSPProtocol.build_sack_payload(sack_blocks)
-            
-            ack_pkt = QSPProtocol.pack(
-                PacketType.SACK, 
-                seq=0, 
-                payload=sack_payload, 
-                ack=current_ack, 
-                session_id=self.session_id
-            )
-            self._send_wrapped(ack_pkt)
-
-            if self.on_data_received:
-                for data in deliverable:
-                    self.on_data_received(data)
-
-        elif msg_type == PacketType.SACK:
-            sack_blocks = QSPProtocol.parse_sack_blocks(payload)
-            retransmits, rtt_sample = self.rudp.handle_sack(ack, sack_blocks)
-
-            if len(retransmits) > 0:
-                self.cc.on_loss()
-            elif rtt_sample > 0:
-                self.cc.on_ack(rtt=rtt_sample)
-
-            for r_seq, encrypted_payload in retransmits:
-                pkt = QSPProtocol.pack(
-                    PacketType.DATA, 
-                    seq=r_seq, 
-                    payload=encrypted_payload, 
-                    session_id=self.session_id
-                )
-                self._send_wrapped(pkt)
+        pass
 
     def send_reliable(self, cleartext: bytes):
-        if self.sec_channel.state != ChannelState.ESTABLISHED:
-            raise PermissionError("安全信道尚未建立，拒绝传输资产数据。")
-
-        encrypted_payload = self.sec_channel.encrypt_payload(cleartext)
-        seq = self.rudp.next_seq_num
-        self.rudp.track_sent_packet(seq, encrypted_payload)
-        
-        pkt = QSPProtocol.pack(
-            PacketType.DATA, 
-            seq=seq, 
-            payload=encrypted_payload, 
-            session_id=self.session_id
-        )
-        self._send_wrapped(pkt)
+        pass

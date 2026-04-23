@@ -25,8 +25,7 @@ class LatticeWrapper:
         Returns:
             (pk, sk): 公钥和私钥的字节流
         """
-        pk, sk = ML_DSA_44.keygen()
-        return pk, sk
+        pass
 
     @staticmethod
     def sign_message(sk: bytes, message: bytes) -> bytes:
@@ -38,7 +37,7 @@ class LatticeWrapper:
         Returns:
             signature: 签名结果字节流 (Dilithium2 为 2420 字节)
         """
-        return ML_DSA_44.sign(sk, message)
+        pass
 
     @staticmethod
     def verify_signature(pk: bytes, message: bytes, signature: bytes) -> bool:
@@ -51,10 +50,7 @@ class LatticeWrapper:
         Returns:
             bool: 验证通过返回 True，否则返回 False
         """
-        try:
-            return ML_DSA_44.verify(pk, message, signature)
-        except Exception:
-            return False
+        pass
             
             
     # --- ML-KEM (Kyber512) 密钥交换 (KEM) API ---
@@ -66,8 +62,7 @@ class LatticeWrapper:
         Returns:
             (pk, sk): KEM 公钥和私钥的字节流
         """
-        pk, sk = ML_KEM_512.keygen()
-        return pk, sk
+        pass
         
     @staticmethod
     def kem_encapsulate(pk: bytes) -> tuple[bytes, bytes]:
@@ -80,8 +75,7 @@ class LatticeWrapper:
         Note:
             kyber_py 库的 encaps 返回 (shared_secret, ciphertext)，需要调整顺序
         """
-        shared_secret, ciphertext = ML_KEM_512.encaps(pk)
-        return ciphertext, shared_secret
+        pass
         
     @staticmethod
     def kem_decapsulate(sk: bytes, ciphertext: bytes) -> bytes:
@@ -93,5 +87,4 @@ class LatticeWrapper:
         Returns:
             shared_secret: 协商出的对称密钥 (Session Key)
         """
-        shared_secret = ML_KEM_512.decaps(sk, ciphertext)
-        return shared_secret
+        pass

@@ -18,7 +18,7 @@ class DilithiumSigner:
         Returns:
             signature (bytes): 签名结果 (Dilithium2 长度为 2420 字节)
         """
-        return LatticeWrapper.sign_message(sk, message)
+        pass
 
     @staticmethod
     def verify(pk: bytes, message: bytes, signature: bytes) -> bool:
@@ -33,4 +33,4 @@ class DilithiumSigner:
         Returns:
             bool: 验证通过返回 True，否则返回 False
         """
-        return LatticeWrapper.verify_signature(pk, message, signature)
+        pass

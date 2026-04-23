@@ -18,30 +18,12 @@ class VaultCrypto:
 
     def _derive_key(self, password: str) -> bytes:
         """从用户密码中利用 PBKDF2 算法加上强随机盐提取出 256位 密钥"""
-        if os.path.exists(self.salt_path):
-            with open(self.salt_path, "rb") as f:
-                salt = f.read()
-        else:
-            salt = os.urandom(16)
-            with open(self.salt_path, "wb") as f:
-                f.write(salt)
-
-        # 迭代十万次，显著增加暴力破解成本
-        kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=salt,
-            iterations=100000,
-        )
-        return kdf.derive(password.encode('utf-8'))
+        pass
 
     def encrypt_chunk(self, plaintext: bytes) -> bytes:
         """对 512 字节块进行 GCM 认证加密 (附加 12字节 Nonce 和 16字节 Tag)"""
-        nonce = os.urandom(12)
-        return nonce + self.aes_gcm.encrypt(nonce, plaintext, None)
+        pass
 
     def decrypt_chunk(self, ciphertext: bytes) -> bytes:
         """实时解密并校验磁盘读取的块是否遭到本地篡改"""
-        nonce = ciphertext[:12]
-        payload = ciphertext[12:]
-        return self.aes_gcm.decrypt(nonce, payload, None)
+        pass

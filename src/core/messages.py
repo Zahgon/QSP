@@ -53,22 +53,7 @@ class RecoveryMessage:
         Returns:
             JSON 编码的 utf-8 字节流
         """
-        # 1. 预处理: 将字典中的 bytes 转为 base64 string
-        clean_data = {}
-        for k, v in data.items():
-            if isinstance(v, bytes):
-                clean_data[k] = base64.b64encode(v).decode('utf-8')
-            else:
-                clean_data[k] = v
-                
-        # 2. 构造完整包
-        envelope = {
-            "t": msg_type.value, # type
-            "d": clean_data      # data
-        }
-        
-        # 3. 转为 JSON bytes
-        return json.dumps(envelope).encode('utf-8')
+        pass
 
     @staticmethod
     def deserialize(payload_bytes: bytes) -> tuple[RecoveryMsgType, dict]:
@@ -80,15 +65,9 @@ class RecoveryMessage:
             (RecoveryMsgType, data_dict)
             注意: data_dict 中的 base64 string 需要业务层调用 decode_field 显式解码。
         """
-        try:
-            envelope = json.loads(payload_bytes.decode('utf-8'))
-            msg_type = RecoveryMsgType(envelope["t"])
-            data = envelope["d"]
-            return msg_type, data
-        except (json.JSONDecodeError, KeyError, ValueError) as e:
-            raise ValueError(f"Invalid recovery message format: {e}")
+        pass
 
     @staticmethod
     def decode_field(b64_str: str) -> bytes:
         """辅助工具: 专门用于解码提取 Base64 字段还原为 bytes"""
-        return base64.b64decode(b64_str)
+        pass

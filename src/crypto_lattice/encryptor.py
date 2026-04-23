@@ -16,8 +16,7 @@ class KyberKEM:
             pk (bytes): 公钥 (800 bytes)
             sk (bytes): 私钥 (1632 bytes)
         """
-        # 调用适配器的 kem_keygen
-        return LatticeWrapper.kem_keygen()
+        pass
 
     @staticmethod
     def encapsulate(peer_pk: bytes):
@@ -32,9 +31,7 @@ class KyberKEM:
             ciphertext (bytes): 需通过网络发送给对方的密文 (768 bytes)
             shared_secret (bytes): 本地保留的共享密钥 (32 bytes)
         """
-        # 调用适配器的 kem_encapsulate
-        # 注意: 适配器已确保返回顺序为 (ciphertext, shared_secret)
-        return LatticeWrapper.kem_encapsulate(peer_pk)
+        pass
 
     @staticmethod
     def decapsulate(ciphertext: bytes, my_sk: bytes):
@@ -49,5 +46,4 @@ class KyberKEM:
         Returns:
             shared_secret (bytes): 恢复出的共享密钥 (32 bytes)
         """
-        # 调用适配器的 kem_decapsulate，参数顺序为 (sk, ciphertext)
-        return LatticeWrapper.kem_decapsulate(my_sk, ciphertext)
+        pass
